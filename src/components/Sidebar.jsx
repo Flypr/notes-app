@@ -1,3 +1,4 @@
+/* eslint-disable react/prop-types */
 function Sidebar(props) {
     const noteElements = props.notes.map((note, index) => (
         <div key={note.id}>
@@ -9,6 +10,13 @@ function Sidebar(props) {
                 onClick={() => props.setCurrentNoteId(note.id)}
             >
                 <h4 className="text-snippet">{note.body.split("\n")[0]}</h4>
+                <button 
+                    className="delete-btn"
+                    // Your onClick event handler here
+                    onClick={(event) => props.deleteNote(event, note.id)}
+                >
+                    <i className="gg-trash trash-icon"></i>
+                </button>
             </div>
         </div>
     ))

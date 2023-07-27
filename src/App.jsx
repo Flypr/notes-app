@@ -7,10 +7,6 @@ import Split from "react-split"
 import {nanoid} from "nanoid"
 
 function App() {
-  /**
-   * Challenge: When the user edits a note, reposition
-   * it in the list of notes to the top of the list
-   */
   const [notes, setNotes] = useState(() => JSON.parse(localStorage.getItem("notes")) || [])
   const [currentNoteId, setCurrentNoteId] = useState(
     (notes[0] && notes[0].id) || ""
@@ -45,6 +41,13 @@ function App() {
       }
     )
   }
+    
+  function deleteNote(event, noteId) {
+    event.stopPropagation()
+    // Your code here
+    setNotes(prevNotes => prevNotes.filter(note => note.id !== noteId))
+    
+  }
   
   function findCurrentNote() {
     return notes.find(note => {
@@ -67,6 +70,7 @@ function App() {
           currentNote={findCurrentNote()}
           setCurrentNoteId={setCurrentNoteId}
           newNote={createNewNote}
+          deleteNote={deleteNote}
         />
         {
           currentNoteId && 

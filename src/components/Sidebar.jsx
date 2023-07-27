@@ -1,5 +1,3 @@
-import React from "react";
-
 function Sidebar(props) {
     const noteElements = props.notes.map((note, index) => (
         <div key={note.id}>

@@ -7,6 +7,10 @@ import Split from "react-split"
 import {nanoid} from "nanoid"
 
 function App() {
+  /**
+   * Challenge: When the user edits a note, reposition
+   * it in the list of notes to the top of the list
+   */
   const [notes, setNotes] = useState(() => JSON.parse(localStorage.getItem("notes")) || [])
   const [currentNoteId, setCurrentNoteId] = useState(
     (notes[0] && notes[0].id) || ""
@@ -26,11 +30,20 @@ function App() {
   }
   
   function updateNote(text) {
-    setNotes(oldNotes => oldNotes.map(oldNote => {
-      return oldNote.id === currentNoteId
-        ? { ...oldNote, body: text }
-        : oldNote
-    }))
+    // Put the most recently-modified note at the top of the list
+    setNotes(oldNotes => {
+        const newArray = [] //create new array
+        for (let i = 0; i < oldNotes.length; i++) { //loop through old notes
+          const oldNote = oldNotes[i] //set old note to current index
+          if (oldNote.id === currentNoteId) { //if old note id matches current note id
+            newArray.unshift({ ...oldNote, body: text }) //add new note at the beginning of array
+          } else { //if old note id does not match current note id
+            newArray.push(oldNote) //add old note to end of array
+          }
+        }
+        return newArray //return new array
+      }
+    )
   }
   
   function findCurrentNote() {

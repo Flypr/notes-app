@@ -3,18 +3,19 @@ import { useState } from "react"
 import Sidebar from "./components/Sidebar"
 import Editor from "./components/Editor"
 import Split from "react-split"
-// import {nanoid} from "nanoid"
 import { addDoc, onSnapshot, doc, deleteDoc, setDoc } from "firebase/firestore"
 import { notesCollection, db } from "./firebase"
 
 function App() {
   const [notes, setNotes] = useState([])
   const [currentNoteId, setCurrentNoteId] = useState("")
-  const currentNote = notes.find(note => note.id === currentNoteId) || notes[0]
+
+  const currentNote = notes.find(note => note.id === currentNoteId) || notes[0] // find the note with the currentNoteId or the first note in the array
+
+  const sortedNotes = notes.sort((a, b) => b.updatedAt - a.updatedAt) // sort notes by updatedAt
 
   React.useEffect(() => {
     const unsubscribe = onSnapshot(notesCollection, function(snapshot) {
-      // console.log("Things are changing!")
       const notesArray = snapshot.docs.map(doc => ({
         ...doc.data(),
         id: doc.id
@@ -32,7 +33,9 @@ function App() {
   
   async function createNewNote() {
     const newNote = {
-      body: "# Type your markdown note's title here"
+      body: "# Type your markdown note's title here",
+      createdAt: Date.now(),
+      updatedAt: Date.now()
     }
     const newNoteRef = await addDoc(notesCollection, newNote)
     setCurrentNoteId(newNoteRef.id)
@@ -40,7 +43,7 @@ function App() {
   
   async function updateNote(text) {
     const docRef = doc(db, "notes", currentNoteId);
-    await setDoc(docRef, { body: text }, { merge: true })
+    await setDoc(docRef, { body: text, updatedAt: Date.now() }, { merge: true })
   }
     
   async function deleteNote(noteId) {
@@ -59,7 +62,7 @@ function App() {
         className="split"
       >
         <Sidebar
-          notes={notes}
+          notes={sortedNotes}
           currentNote={currentNote}
           setCurrentNoteId={setCurrentNoteId}
           newNote={createNewNote}
